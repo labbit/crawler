@@ -9,7 +9,7 @@
 <p>
 <em>
 % foreach my $tag (keys %{$tags}) {
-	<a href="/tag/<%= $tags->{$tag}->{name} %>">
+	<a href="/tag/<%= $tags->{$tag}->{name} %>" title="<%= $tags->{$tag}->{name} %> <%= $tags->{$tag}->{tag_id} %>">
 		<%= $tags->{$tag}->{name} %>
 	</a>
 	&nbsp;
