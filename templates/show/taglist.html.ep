@@ -1,5 +1,5 @@
 % layout 'default';
-% title 'TAGS';
+% title 'list articles for tag';
 <h2>List articles for tag</h2>
 <p>
 <ul>
