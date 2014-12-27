@@ -1,0 +1,18 @@
+% layout 'default';
+% title 'all';
+<h2>List articles</h2>
+<ul>
+% foreach my $text (keys %{$articles}) {
+	<li>
+		<b><%= $articles->{$text}->{cat} %></b>, 
+		<%= $articles->{$text}->{mtime} %>, 
+		<a href="/<%= $articles->{$text}->{aid} %>">
+			<%= $articles->{$text}->{text} %>
+		</a>
+
+	</li>
+% }
+</ul>
+
+
+</p>
