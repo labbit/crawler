@@ -1,6 +1,7 @@
 % layout 'default';
-% title 'all';
+% title 'list all articles';
 <h2>List articles</h2>
+<p>
 <ul>
 % foreach my $text (keys %{$articles}) {
 	<li>
