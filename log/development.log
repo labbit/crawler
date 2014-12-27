@@ -1,0 +1,5 @@
+[Sat Dec 27 23:05:42 2014] [debug] GET "/".
+[Sat Dec 27 23:05:42 2014] [debug] Routing to controller "TextShow::Show" and action "all".
+[Sat Dec 27 23:05:42 2014] [debug] Rendering template "show/all.html.ep".
+[Sat Dec 27 23:05:42 2014] [debug] Rendering template "layouts/default.html.ep".
+[Sat Dec 27 23:05:42 2014] [debug] 200 OK (0.493985s, 2.024/s).
