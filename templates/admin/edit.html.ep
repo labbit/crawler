@@ -29,7 +29,12 @@
 	&nbsp;
 	<input type="radio" name="show_flag" value="0">hidden		
 	<br /><br />
-	<textarea rows="8" cols="60" name="article"><%= $msg %></textarea>
+	main text:<br />
+	<textarea rows="12" cols="90" name="article"><%= $msg %></textarea>
+	<br />
+	tags:<br />	
+	<input type="text" size="90" name="tags" value="<%= $tags %>" />
+
 	<br />
 	<input type="submit" value="SAVE" />
 
