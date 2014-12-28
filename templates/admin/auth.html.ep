@@ -1,0 +1,18 @@
+% layout 'default';
+% title 'auth form';
+<h2>Enter your login and password</h2>
+<div >
+	 <form action="/login">
+		Login:<br>
+		<input type="text" name="login" value="Mickey">
+		<br/>
+		Password:<br/>
+		<input type="password" name="password">
+		<br /><br />
+		<input type="submit" value="Submit">
+	</form>
+	<br/><br/>
+</div>
+<div>
+	<a href="/">Main page</a>
+</div>
