@@ -1,0 +1,19 @@
+% layout 'default';
+% title 'all articles';
+<h2>adminko - list</h2>
+<p>
+<ul>
+% foreach my $text (keys %{$articles}) {
+		<li>
+		<%= $articles->{$text}->{mtime} %>,
+		<%= $articles->{$text}->{cat} %>,
+		<a href="/admin/<%= $articles->{$text}->{aid} %>/edit">
+			<%= $articles->{$text}->{text} %>
+ 		</a>
+
+	</li>
+% }
+</ul>
+
+
+</p>
