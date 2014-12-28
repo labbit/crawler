@@ -1,13 +1,12 @@
 % layout 'default';
 % title 'One article';
 <h2><%= $category %></h2>
-<p>
+<div>
 <%= $mtime %><br />
 <%= $msg %><br />
 
-</p>
-<p>
-&nbsp;&nbsp;&nbsp;
+</div>
+<div>
 <em>
 % foreach my $tag (keys %{$tags}) {
 	<a href="/tag/<%= $tags->{$tag}->{name} %>" title="<%= $tags->{$tag}->{tag_id} %>">
@@ -16,6 +15,8 @@
 	&nbsp;
 % }
 </em>
-</p>
-
-<p><a href="/">Main page</a></p>
+<br />
+</div>
+<div>
+	<a href="/">Main page</a>
+</div>
