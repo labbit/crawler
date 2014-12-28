@@ -7,7 +7,7 @@
 	<br/>
 	<a href="/admin">List artictles</a>
 	&nbsp;&nbsp;&nbsp;
-	<a href="/admin/<%= $art_id %>/edit">EDIT</a>
+	<a href="/admin/<%= $art_id %>/edit">edit</a>
 	&nbsp;&nbsp;&nbsp;
 	<a href="/logout">logout</a>
 <br /><br />
@@ -28,12 +28,11 @@
 	<p>
 		tags: 
 		<em>
-			% foreach my $tag (keys %{$tags}) {				
+			% foreach my $tag (keys %{$tags}) {
 				<%= $tags->{$tag}->{name} %>
 				&nbsp;
 			% }
 		</em>
 	</p>
-
 	
 </div>
