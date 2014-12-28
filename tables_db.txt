@@ -1,0 +1,32 @@
+CREATE TABLE `article` (
+  `article_id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(4) NOT NULL DEFAULT '1',
+  `ctime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `mtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `text` text NOT NULL,
+  `category_id` int(11) NOT NULL,
+  PRIMARY KEY (`article_id`),
+  KEY `fk_article_1` (`category_id`),
+  CONSTRAINT `fk_article_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=MyISAM AUTO_INCREMENT=8 DEFAULT CHARSET=utf8
+
+CREATE TABLE `category` (
+  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` tinyint(4) NOT NULL DEFAULT '1',
+  `name` varchar(255) NOT NULL DEFAULT 'new category',
+  PRIMARY KEY (`category_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8
+
+
+CREATE TABLE `tag` (
+  `tag_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT 'new tag',
+  PRIMARY KEY (`tag_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8
+
+CREATE TABLE `text_tag` (
+  `text_id` int(11) NOT NULL DEFAULT '0',
+  `tag_id` int(11) NOT NULL DEFAULT '0',
+  KEY `ix_tt` (`text_id`,`tag_id`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8
+
