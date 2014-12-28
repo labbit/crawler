@@ -8,7 +8,6 @@ has 'dbconn' => sub {
 
 	my $conn = DBIx::Connector->new( 'dbi:mysql:dbname=sometest;', 'someus', 'Cho8yi4G', {RaiseError => 1, AutoCommit => 0});
 	my $dbh = $conn->dbh;
-	$dbh->do('set names utf8');	
 
 	return $conn;
 };
@@ -17,9 +16,8 @@ has 'dbconn' => sub {
 sub startup {
 	my $self = shift;
 
-	my $r = $self->routes;
-
 	# show text 
+	my $r = $self->routes;
 	$r->get('/')->to('show#all');
 	$r->get('/:id' => [id => qr/\d+/])->to('show#someone', id => 2);
 	$r->get('/tag/:tag')->to('show#taglist');
