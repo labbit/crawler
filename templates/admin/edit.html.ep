@@ -1,0 +1,38 @@
+% layout 'default';
+% title 'edit article';
+
+<h2>edit article # <%= $a_id %></h2>
+
+<div>
+	<br/>
+	<a href="/admin">List artictles</a>
+	&nbsp;&nbsp;&nbsp;
+	<a href="/logout">logout</a>
+<br /><br />
+</div>
+
+<div >
+<form action="/admin/<%= $a_id %>/save" method="post">
+
+	<select name="cat_id">
+	% my $sel_flag = '';
+	% foreach my $cat (keys %{$cats}) {			
+		% if(int($cats->{$cat}->{c_id}) == int($c_id)) {
+		% $sel_flag = 'selected';
+		% }
+		<option value="<%= $cats->{$cat}->{c_id} %>" <%= $sel_flag%> ><%= $cats->{$cat}->{name} %></option>
+	% }
+	</select>
+
+	&nbsp;
+	<input type="radio" name="show_flag" value="1" checked>show 
+	&nbsp;
+	<input type="radio" name="show_flag" value="0">hidden		
+	<br /><br />
+	<textarea rows="8" cols="60" name="article"><%= $msg %></textarea>
+	<br />
+	<input type="submit" value="SAVE" />
+
+</form>
+</div>
+
