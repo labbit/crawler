@@ -1,7 +1,14 @@
 % layout 'default';
 % title 'all articles';
-<h2>adminko - list</h2>
-<p>
+<h2>adminko - list articles</h2>
+
+<div>
+	<br />
+	<a href="/logout">logout</a>
+<br /><br />
+</div>
+
+<div>
 <ul>
 % foreach my $text (keys %{$articles}) {
 	<li>
@@ -16,6 +23,4 @@
 	</li>
 % }
 </ul>
-
-
-</p>
+</div>
