@@ -196,7 +196,7 @@ sub update {
 				$sth->execute($text, $category_id, $show_flag, $id);	
 			});
 		};
-		
+=comment		
 		if ($tags ne '') {
 			my @tags = split(/\,\s?/, $tags);
 			if (scalar(@tags) != 0) {
@@ -218,7 +218,7 @@ sub update {
 				});
 			}
 		}
-		
+=cut		
 		
 		if($@) {
 			$self->render(text => 'DB ERROR:'.$@); 
