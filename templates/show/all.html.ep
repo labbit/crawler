@@ -1,7 +1,7 @@
 % layout 'default';
-% title 'list all articles';
+% title 'all';
 <h2>List articles</h2>
-<p>
+<div>
 <ul>
 % foreach my $text (keys %{$articles}) {
 	<li>
@@ -14,6 +14,4 @@
 	</li>
 % }
 </ul>
-
-
-</p>
+</div>
