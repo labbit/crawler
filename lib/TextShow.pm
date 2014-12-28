@@ -28,7 +28,7 @@ sub startup {
 	$r->get('/form')->to('admin#auth', mymessage=> 'login, please');
 	$r->get('/login')->to('admin#login');
 	$r->get('/logout')->to('admin#logout');
-
+	
 	my $rn = $r->bridge('/admin')->to('admin#check');	
 	$rn->route ->via('get')->to('admin#list');
 	$rn->get('/:id/edit' => [id => qr/\d+/])->to('admin#edit');	
