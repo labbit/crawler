@@ -196,6 +196,30 @@ sub update {
 				$sth->execute($text, $category_id, $show_flag, $id);	
 			});
 		};
+		
+		if ($tags ne '') {
+			my @tags = split(/\,\s?/, $tags);
+			if (scalar(@tags) != 0) {
+				my $sth_t = $self->app->dbconn->run(fixup => sub {
+				my $sth_t = $_->prepare("DELETE FROM text_tag WHERE text_id = ?");			
+				$sth_t->execute($id);
+			
+				foreach my $t (@tags) {
+					$sth_t = $_->prepare("REPLACE INTO tag SET name = ?");
+					$sth_t->execute($t);
+					$sth_t = $_->prepare("SELECT tag_id FROM tag WHERE name = ? ORDER BY tag_id DESC LIMIT 1");
+					$sth_t->execute($t);
+					my $tag_ref = $sth_t->fetchall_arrayref;
+					$sth_t = $_->prepare("INSERT INTO text_tag SET text_id = ?, tag_id =? ");
+					$sth_t->execute($id, ${$tag_ref}[0]);
+				}	
+				
+				$sth_t->finish();
+				});
+			}
+		}
+		
+		
 		if($@) {
 			$self->render(text => 'DB ERROR:'.$@); 
 			$self->flash( error => 'Something wrong to DB!' )->redirect_to('/admin');
@@ -206,7 +230,7 @@ sub update {
 
 		
 	} else {
-		$self->flash( error => 'Category or main tex section empty!' )->redirect_to('/admin/'.$id.'/edit');
+		$self->flash( error => 'Category or main text section empty!' )->redirect_to('/admin/'.$id.'/edit');
 	}
 
 	
