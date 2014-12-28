@@ -32,9 +32,10 @@
 	main text:<br />
 	<textarea rows="12" cols="90" name="article"><%= $msg %></textarea>
 	<br />
+<!--
 	tags:<br />	
 	<input type="text" size="90" name="tags" value="<%= $tags %>" />
-
+//-->
 	<br />
 	<input type="submit" value="SAVE" />
 
