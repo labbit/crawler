@@ -4,13 +4,15 @@
 <p>
 <ul>
 % foreach my $text (keys %{$articles}) {
-		<li>
+	<li>
 		<%= $articles->{$text}->{mtime} %>,
 		<%= $articles->{$text}->{cat} %>,
-		<a href="/admin/<%= $articles->{$text}->{aid} %>/edit">
-			<%= $articles->{$text}->{text} %>
- 		</a>
-
+		<%= $articles->{$text}->{text} %>,
+		<br />
+		<a href="/admin/<%= $articles->{$text}->{aid} %>/edit">edit</a>
+		&nbsp;
+		<a href="/admin/<%= $articles->{$text}->{aid} %>/preview">show</a>
+		<br /><br />
 	</li>
 % }
 </ul>
