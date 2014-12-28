@@ -1,0 +1,37 @@
+% layout 'default';
+% title 'preview article';
+
+<h2>preview article # <%= $art_id %></h2>
+
+<div>
+	<br/>
+	<a href="/admin">List artictles</a>
+	&nbsp;&nbsp;&nbsp;
+	<a href="/logout">logout</a>
+<br /><br />
+</div>
+
+
+<div>
+	<p>
+		caterogy - <b><%= $category %></b>, 
+		&nbsp;
+		article_ID - <%= $art_id %>
+	</p>
+	<div>
+		main text:<br/>
+		<%= $msg %>
+		<br /><br />
+	</div>
+	<p>
+		tags: 
+		<em>
+			% foreach my $tag (keys %{$tags}) {				
+				<%= $tags->{$tag}->{name} %>
+				&nbsp;
+			% }
+		</em>
+	</p>
+
+	
+</div>
