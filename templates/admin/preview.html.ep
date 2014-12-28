@@ -7,6 +7,8 @@
 	<br/>
 	<a href="/admin">List artictles</a>
 	&nbsp;&nbsp;&nbsp;
+	<a href="/admin/<%= $art_id %>/edit">EDIT</a>
+	&nbsp;&nbsp;&nbsp;
 	<a href="/logout">logout</a>
 <br /><br />
 </div>
