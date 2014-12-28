@@ -27,12 +27,8 @@
 	</div>
 	<p>
 		tags: 
-		<em>
-			% foreach my $tag (keys %{$tags}) {
-				<%= $tags->{$tag}->{name} %>
-				&nbsp;
-			% }
-		</em>
+		<em><%= $tags %></em>
 	</p>
 	
 </div>
+
