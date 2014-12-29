@@ -1,11 +1,10 @@
 % layout 'default';
 % title 'List articles for tag';
-<h2>List articles for tag</h2>
+<h2>List articles for tag <%= $sel_tag %></h2>
 <div>
 <ul>
 % foreach my $text (keys %{$articles}) {
-	<li>
-		<b><%= $articles->{$text}->{cat} %></b>, 
+	<li>		
 		<%= $articles->{$text}->{mtime} %>, 
 		<a href="/<%= $articles->{$text}->{article_id} %>">
 			<%= $articles->{$text}->{text} %>
