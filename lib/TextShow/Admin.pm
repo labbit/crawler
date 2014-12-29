@@ -48,14 +48,11 @@ sub list {
 
 	my $list;
 	my $sth = $self->app->dbconn->run(fixup => sub {        
-		my $sth = $_->prepare(
-			'SELECT 
-				c.name AS cat, 
+		my $sth = $_->prepare('SELECT 
 				a.article_id AS aid, LEFT(a.text, 60) AS text, 
 				a.mtime, a.ctime
-			FROM article AS a, category AS c 
-			WHERE                 
-				a.category_id = c.category_id
+			FROM
+				article AS a
 			ORDER BY a.mtime DESC');
 		$sth->execute();
 		$list = $sth->fetchall_hashref('ctime');
@@ -75,7 +72,6 @@ sub edit {
 	my $sth = $self->app->dbconn->run(fixup => sub {
 		my $sth = $_->prepare("SELECT 
 				article_id,
-				category_id,
 				text				
 			FROM article
 			WHERE 
@@ -99,25 +95,10 @@ sub edit {
 		$sth_t->finish();
 	});
 
-
-	my $cats;
-	my $sth_c = $self->app->dbconn->run(fixup => sub {
-	my $sth_c = $_->prepare("SELECT 
-				category_id AS c_id, name
-			FROM category
-			ORDER BY category_id ASC");
-		$sth_c->execute();
-		$cats = $sth_c->fetchall_hashref('c_id');
-		$sth_c->finish();
-	});
-
-
 	$self->stash(
 		msg => $list->{text}, 
 		a_id => $list->{article_id}, 	
-		c_id => $list->{category_id},
 		mtime => $list->{mtime},
-		cats => $cats,
 		tags => $tags
 	);
 }
@@ -133,11 +114,9 @@ sub preview {
 	my $list; 	
 	my $sth = $self->app->dbconn->run(fixup => sub {
 		my $sth = $_->prepare("SELECT 
-				c.name AS category, 
 				a.article_id AS art_id, 
 				a.text AS text, a.mtime	
 			FROM article AS a
-				LEFT JOIN category AS c ON (a.category_id = c.category_id)
 			WHERE 
 				a.article_id = ?
 				AND a.status != 0
@@ -163,7 +142,6 @@ sub preview {
 	$self->stash(
 		msg => $list->{text}, 
 		art_id => $list->{art_id}, 	
-		category => $list->{category}, 
 		mtime => $list->{mtime},
 		tags => $tags
 	);
@@ -175,12 +153,11 @@ sub update {
 	my $self = shift;
 
 	my $id = $self->stash('id');
-
-	my $category_id = $self->req->body_params->param('cat_id');
+	
 	my $text = $self->req->body_params->param('article');
 	my $show_flag = $self->req->body_params->param('show_flag');
 
-	if ( (int($id) != 0) && (int($category_id) != 0 ) && ($text ne '')) {
+	if ( (int($id) != 0) && ($text ne '')) {
 
 		eval {
 			my $sth = $self->app->dbconn->run(fixup => sub {
@@ -188,7 +165,6 @@ sub update {
 					SET 
 						mtime = NOW(), 
 						text = ?,
-					 	category_id = ?,
 					 	status = ?
 					WHERE 
 						article_id = ?			
