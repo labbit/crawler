@@ -11,13 +11,11 @@ sub taglist {
 	
 	my $sth = $_->prepare('SELECT DISTINCT
 				a.article_id, a.mtime,
-				c.name AS cat, 
 				LEFT(a.text, 60) AS text
 			FROM
 				tag AS t
 				LEFT JOIN text_tag AS tt ON (t.tag_id = tt.tag_id)
 				LEFT JOIN article AS a ON (tt.text_id = a.article_id)
-				LEFT JOIN category AS c ON (a.category_id = c.category_id)
 			WHERE
 				t.name = ?
 			ORDER BY a.mtime DESC');
@@ -25,7 +23,7 @@ sub taglist {
 		$list = $sth->fetchall_hashref('article_id');
 		$sth->finish();
 	});
-	$self->stash(articles => $list);
+	$self->stash(articles => $list, sel_tag => $tag);
 
 }
 
@@ -37,12 +35,10 @@ sub someone {
 
 	my $list; 	
 	my $sth = $self->app->dbconn->run(fixup => sub {
-		my $sth = $_->prepare("SELECT 
-				c.name AS category, 
+		my $sth = $_->prepare("SELECT 				
 				a.article_id AS art_id, 
 				a.text AS text, a.mtime	
 			FROM article AS a
-				LEFT JOIN category AS c ON (a.category_id = c.category_id)
 			WHERE 
 				a.article_id = ?
 				AND a.status != 0
@@ -67,8 +63,7 @@ sub someone {
 
 	$self->stash(
 		msg => $list->{text}, 
-		art_id => $list->{art_id}, 	
-		category => $list->{category}, 
+		art_id => $list->{art_id}, 			
 		mtime => $list->{mtime},
 		tags => $tags
 	);
@@ -82,14 +77,12 @@ sub all {
 
 	my $list;
 	my $sth = $self->app->dbconn->run(fixup => sub {
-		my $sth = $_->prepare("SELECT 
-				c.name AS cat, 
+		my $sth = $_->prepare("SELECT 				
 				a.article_id AS aid, LEFT(a.text, 60) AS text, 
 				a.mtime, a.ctime
-			FROM article AS a, category AS c
+			FROM article AS a
 			WHERE 
-				a.status != 0 
-				AND a.category_id = c.category_id
+				a.status != 0
 			ORDER BY a.mtime DESC");
 		$sth->execute();
 		$list = $sth->fetchall_hashref('ctime');
