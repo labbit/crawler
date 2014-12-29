@@ -1,25 +1,47 @@
 % layout 'default';
 % title 'all articles';
-<h2>adminko - list articles</h2>
+<h2>adminko - list</h2>
+
 
 <div>
-	<br />
+<!--
+	<a href="/admin/create">NEW</a>
+	&nbsp;&nbsp;&nbsp;
+//-->
 	<a href="/logout">logout</a>
 <br /><br />
 </div>
 
 <div>
+
 <ul>
 % foreach my $text (keys %{$articles}) {
 	<li>
-		<%= $articles->{$text}->{mtime} %>,
-		<%= $articles->{$text}->{text} %>,
+
+		% if( int($articles->{$text}->{status}) != 1) {
+			<span style="color: red;">
+		% }
+
+		<%= $articles->{$text}->{mtime} %>: 		
+		<%= $articles->{$text}->{text} %>
 		<br />
+		% if( int($articles->{$text}->{status}) != 1) {
+		<a href="/admin/<%= $articles->{$text}->{aid} %>/show">show</a>
+		% } else {
+		<a href="/admin/<%= $articles->{$text}->{aid} %>/hide">hidden</a>
+		% }		
+		&nbsp;
 		<a href="/admin/<%= $articles->{$text}->{aid} %>/edit">edit</a>
 		&nbsp;
-		<a href="/admin/<%= $articles->{$text}->{aid} %>/preview">show</a>
+		<a href="/admin/<%= $articles->{$text}->{aid} %>/preview">preview</a>
 		<br /><br />
+
+		% if( int($articles->{$text}->{status}) != 1) {
+			</span>
+		% }
 	</li>
 % }
 </ul>
+
+
 </div>
