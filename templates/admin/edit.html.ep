@@ -14,17 +14,6 @@
 <div >
 <form action="/admin/<%= $a_id %>/save" method="post">
 
-	<select name="cat_id">
-	% my $sel_flag = '';
-	% foreach my $cat (keys %{$cats}) {			
-		% if(int($cats->{$cat}->{c_id}) == int($c_id)) {
-		% $sel_flag = 'selected';
-		% }
-		<option value="<%= $cats->{$cat}->{c_id} %>" <%= $sel_flag%> ><%= $cats->{$cat}->{name} %></option>
-	% }
-	</select>
-
-	&nbsp;
 	<input type="radio" name="show_flag" value="1" checked>show 
 	&nbsp;
 	<input type="radio" name="show_flag" value="0">hidden		
