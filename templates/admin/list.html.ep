@@ -13,7 +13,6 @@
 % foreach my $text (keys %{$articles}) {
 	<li>
 		<%= $articles->{$text}->{mtime} %>,
-		<%= $articles->{$text}->{cat} %>,
 		<%= $articles->{$text}->{text} %>,
 		<br />
 		<a href="/admin/<%= $articles->{$text}->{aid} %>/edit">edit</a>
