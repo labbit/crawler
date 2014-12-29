@@ -9,7 +9,7 @@ sub taglist {
 	my $list;
 	my $sth = $self->app->dbconn->run(fixup => sub {
 	
-	$_->prepare('SELECT DISTINCT
+		my $sth = $_->prepare('SELECT DISTINCT
 				a.article_id, a.mtime,
 				LEFT(a.text, 60) AS text
 			FROM
@@ -35,7 +35,7 @@ sub someone {
 
 	my $list; 	
 	my $sth = $self->app->dbconn->run(fixup => sub {
-		$_->prepare("SELECT 				
+		my $sth = $_->prepare("SELECT 				
 				a.article_id AS art_id, 
 				a.text AS text, a.mtime	
 			FROM article AS a
@@ -50,7 +50,7 @@ sub someone {
 
 	my $tags;
 	my $sth_t = $self->app->dbconn->run(fixup => sub {
-		$_->prepare("SELECT 
+		my $sth_t = $_->prepare("SELECT 
 				t.tag_id, t.name
 			FROM text_tag AS tt 
 				LEFT JOIN tag AS t ON (tt.tag_id = t.tag_id)
@@ -77,7 +77,7 @@ sub all {
 
 	my $list;
 	my $sth = $self->app->dbconn->run(fixup => sub {
-		$_->prepare("SELECT 				
+		my $sth = $_->prepare("SELECT 				
 				a.article_id AS aid, LEFT(a.text, 60) AS text, 
 				a.mtime, a.ctime
 			FROM article AS a
