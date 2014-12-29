@@ -5,7 +5,6 @@
 <ul>
 % foreach my $text (keys %{$articles}) {
 	<li>
-		<b><%= $articles->{$text}->{cat} %></b>, 
 		<%= $articles->{$text}->{mtime} %>, 
 		<a href="/<%= $articles->{$text}->{aid} %>">
 			<%= $articles->{$text}->{text} %>
