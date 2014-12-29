@@ -16,8 +16,6 @@
 
 <div>
 	<p>
-		caterogy - <b><%= $category %></b>, 
-		&nbsp;
 		article_ID - <%= $art_id %>
 	</p>
 	<div>
