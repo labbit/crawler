@@ -2,6 +2,10 @@ package TextShow;
 use Mojo::Base 'Mojolicious';
 
 use DBIx::Connector;
+use DBIx::Simple;
+use SQL::Abstract;
+
+
 
 has 'dbconn' => sub {	
 	my $self = shift;
@@ -13,6 +17,20 @@ has 'dbconn' => sub {
 	return $conn;
 };
 
+
+
+has 'dbc' => sub {	
+	my $self = shift;
+
+	my $db = DBIx::Simple->connect(
+		'DBI:mysql:database=sometest', 'someus', 'Cho8yi4G',
+		{ RaiseError => 1 }
+	);
+
+	$db->abstract = SQL::Abstract->new();
+
+	return $db;
+};
 
 sub startup {
 	my $self = shift;
