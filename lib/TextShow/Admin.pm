@@ -48,19 +48,113 @@ sub list {
 
 	my $list;
 	my $sth = $self->app->dbconn->run(fixup => sub {        
-		my $sth = $_->prepare('SELECT 
-				a.article_id AS aid, LEFT(a.text, 60) AS text, 
-				a.mtime, a.ctime
-			FROM
-				article AS a
-			ORDER BY a.mtime DESC');
+		my $sth = $_->prepare(
+			'SELECT 				
+				article_id AS aid, LEFT(text, 60) AS text, 
+				status, mtime, ctime
+			FROM article
+			ORDER BY mtime DESC');
 		$sth->execute();
 		$list = $sth->fetchall_hashref('ctime');
 		$sth->finish();
 	});
-	$self->stash(articles => $list);
+	$self->stash(articles => $list, show_flag => $list->{status});
 	
 }
+
+
+sub create {
+	my $self = shift;
+
+	eval {
+		my $sth = $self->app->dbconn->txn(fixup => sub {
+			my $sth = $_->prepare("INSERT INTO article
+				SET 
+					ctime = NOW(), 
+					text = 'new article'
+				");
+		});
+	};
+	if($@) {
+		$self->render(text => 'DB ERROR:'.$@); 
+		$self->flash( error => 'Something wrong to DB!' )->redirect_to('/admin');
+	} else {
+		$self->app->dbconn->dbh->commit;
+		my $l_id;
+		my $sth = $self->app->dbconn->run(fixup => sub {
+			my $sth = $_->prepare("SELECT LAST_INSERT_ID() AS l_id");
+			$sth->execute();
+			$l_id = $sth->fetchrow_arrayref;
+			$sth->finish();		
+		});
+say Dumper(${$l_id}[0]);
+		
+		# $self->redirect_to('/admin/'.${$l_id}[0].'/edit');
+
+	}
+
+}
+
+
+sub hidden_text {
+	my $self = shift;
+
+	my $id = $self->stash('id');
+
+	eval {
+		my $sth = $self->app->dbconn->run(fixup => sub {
+			my $sth = $_->prepare("UPDATE article
+				SET 
+					mtime = NOW(), 
+					status = 0
+				WHERE 
+					article_id = ?
+				LIMIT 1");
+			$sth->execute($id);
+		});
+	};
+
+	if($@) {
+		$self->render(text => 'DB ERROR:'.$@); 
+		$self->flash( error => 'Something wrong to DB!' )->redirect_to('/admin');
+	} else {
+		$self->app->dbconn->dbh->commit;
+		$self->redirect_to('/admin/');
+	}
+	
+}
+
+
+
+sub show_text {
+	my $self = shift;
+
+	my $id = $self->stash('id');
+
+	eval {
+		my $sth = $self->app->dbconn->run(fixup => sub {
+			my $sth = $_->prepare("UPDATE article
+				SET 
+					mtime = NOW(), 
+					status = 1
+				WHERE 
+					article_id = ?
+				LIMIT 1");
+			$sth->execute($id);
+		});
+	};
+
+	if($@) {
+		$self->render(text => 'DB ERROR:'.$@); 
+		$self->flash( error => 'Something wrong to DB!' )->redirect_to('/admin');
+	} else {
+		$self->app->dbconn->dbh->commit;
+		$self->redirect_to('/admin/');
+	}
+	
+}
+
+
 
 
 sub edit {
@@ -82,24 +176,29 @@ sub edit {
 		$sth->finish();
 	});
 
-	my $tags;
+	my $tags; my $tag_list;
 	my $sth_t = $self->app->dbconn->run(fixup => sub {
-	my $sth_t = $_->prepare("SELECT 
-				t.tag_id, t.name
+		my $sth_t = $_->prepare("SELECT 
+				t.name
 			FROM text_tag AS tt 
 				LEFT JOIN tag AS t ON (tt.tag_id = t.tag_id)
 			WHERE 
 				tt.text_id = ?");
 		$sth_t->execute($id);
-		$tags = $sth_t->fetchall_hashref('tag_id');
-		$sth_t->finish();
+		$tags = $sth_t->fetchall_arrayref;
+		$sth_t->finish();		
 	});
+	if (scalar(@{$tags}) != 0) {
+		$tag_list = join(', ', map { $_->[0] } @{$tags});
+	} else {
+		$tag_list = '';
+	}
 
 	$self->stash(
 		msg => $list->{text}, 
 		a_id => $list->{article_id}, 	
 		mtime => $list->{mtime},
-		tags => $tags
+		tags => $tag_list
 	);
 }
 
@@ -113,37 +212,42 @@ sub preview {
 	
 	my $list; 	
 	my $sth = $self->app->dbconn->run(fixup => sub {
-		my $sth = $_->prepare("SELECT 
+		my $sth = $_->prepare("SELECT 				
 				a.article_id AS art_id, 
 				a.text AS text, a.mtime	
 			FROM article AS a
 			WHERE 
-				a.article_id = ?
-				AND a.status != 0
+				a.article_id = ?				
 			LIMIT 1");
 		$sth->execute($id);
 		$list = $sth->fetchrow_hashref;
 		$sth->finish();
 	});
 
-	my $tags;
+	my $tags; my $tag_list;
 	my $sth_t = $self->app->dbconn->run(fixup => sub {
 	my $sth_t = $_->prepare("SELECT 
-				t.tag_id, t.name
+				t.name
 			FROM text_tag AS tt 
 				LEFT JOIN tag AS t ON (tt.tag_id = t.tag_id)
 			WHERE 
 				tt.text_id = ?");
 		$sth_t->execute($id);
-		$tags = $sth_t->fetchall_hashref('tag_id');
+		$tags = $sth_t->fetchall_arrayref;
 		$sth_t->finish();
 	});
+	if (scalar(@{$tags}) != 0) {
+		$tag_list = join(', ', map { $_->[0] } @{$tags});
+	} else {
+		$tag_list = '';
+	}
 
 	$self->stash(
 		msg => $list->{text}, 
 		art_id => $list->{art_id}, 	
+		category => $list->{category}, 
 		mtime => $list->{mtime},
-		tags => $tags
+		tags => $tag_list
 	);
 
 }
@@ -156,12 +260,13 @@ sub update {
 	
 	my $text = $self->req->body_params->param('article');
 	my $show_flag = $self->req->body_params->param('show_flag');
+	my $tags = $self->req->body_params->param('tags');
 
 	if ( (int($id) != 0) && ($text ne '')) {
 
 		eval {
 			my $sth = $self->app->dbconn->run(fixup => sub {
-			my $sth = $_->prepare("UPDATE article
+				my $sth = $_->prepare("UPDATE article
 					SET 
 						mtime = NOW(), 
 						text = ?,
@@ -169,33 +274,31 @@ sub update {
 					WHERE 
 						article_id = ?			
 					LIMIT 1");
-				$sth->execute($text, $category_id, $show_flag, $id);	
+				$sth->execute($text, $show_flag, $id);
 			});
 		};
-=comment		
+
 		if ($tags ne '') {
-			my @tags = split(/\,\s?/, $tags);
+
+			my @tags = split(/\,\s?/, lc($tags));
 			if (scalar(@tags) != 0) {
-				my $sth_t = $self->app->dbconn->run(fixup => sub {
-				my $sth_t = $_->prepare("DELETE FROM text_tag WHERE text_id = ?");			
-				$sth_t->execute($id);
-			
+
+				my $r = $self->app->dbc->query('DELETE FROM text_tag WHERE text_id = ?', $id);
+		
 				foreach my $t (@tags) {
-					$sth_t = $_->prepare("REPLACE INTO tag SET name = ?");
-					$sth_t->execute($t);
-					$sth_t = $_->prepare("SELECT tag_id FROM tag WHERE name = ? ORDER BY tag_id DESC LIMIT 1");
-					$sth_t->execute($t);
-					my $tag_ref = $sth_t->fetchall_arrayref;
-					$sth_t = $_->prepare("INSERT INTO text_tag SET text_id = ?, tag_id =? ");
-					$sth_t->execute($id, ${$tag_ref}[0]);
-				}	
+
+					my $tag_id = $self->tag_check($t);
+					if (int($tag_id) == 0) {
+						$tag_id = $self->tag_new_save($t,$id);
+					}
+					my @id = ($id, $tag_id);
+					my $r = $self->tag_save(@id);				
+
+				}			
 				
-				$sth_t->finish();
-				});
 			}
 		}
-=cut		
-		
+
 		if($@) {
 			$self->render(text => 'DB ERROR:'.$@); 
 			$self->flash( error => 'Something wrong to DB!' )->redirect_to('/admin');
@@ -203,15 +306,51 @@ sub update {
 			$self->app->dbconn->dbh->commit;
 			$self->redirect_to('/admin/'.$id.'/preview');
 		}
-
-		
+	
 	} else {
 		$self->flash( error => 'Category or main text section empty!' )->redirect_to('/admin/'.$id.'/edit');
 	}
 
-	
 
 
+
+}
+
+
+
+sub tag_check {
+	my $self = shift;
+	my $tag_name = shift;
+
+    my ($tag_id) = $self->app->dbc->query('SELECT tag_id FROM tag WHERE name = ? LIMIT 1', $tag_name)->list;
+	if ( defined $tag_id) {
+		return $tag_id;
+	} else {
+		return 0;
+	}
+}
+
+
+
+sub tag_save {
+	my $self = shift;
+	my @id = @_;
+
+	my $r = $self->app->dbc->query('INSERT INTO text_tag SET text_id = ?, tag_id =?', @id);
+
+	return 1;
+}
+
+
+
+sub tag_new_save {
+	my $self = shift;
+	my $tag_name = shift;
+
+	my $r = $self->app->dbc->query('INSERT INTO tag SET name = ?', $tag_name);
+	my ($tag_id) = $self->app->dbc->query('SELECT tag_id FROM tag WHERE name = ? LIMIT 1', $tag_name)->list;
+
+	return $tag_id;
 }
 
 
