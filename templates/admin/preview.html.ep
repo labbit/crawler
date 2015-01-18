@@ -18,9 +18,11 @@
 	<p>
 		article_ID - <%= $art_id %>
 	</p>
-	<div>
+	<div style="width: 840px; word-wrap: break-word;">
 		main text:<br/>
-		<%= $msg %>
+		<div style="background-color: grey;">
+			<%= $msg %>
+		</div>
 		<br /><br />
 	</div>
 	<p>
@@ -29,4 +31,3 @@
 	</p>
 	
 </div>
-
