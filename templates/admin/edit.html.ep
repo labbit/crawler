@@ -13,18 +13,18 @@
 
 <div >
 <form action="/admin/<%= $a_id %>/save" method="post">
-
+	
 	<input type="radio" name="show_flag" value="1" checked>show 
 	&nbsp;
 	<input type="radio" name="show_flag" value="0">hidden		
 	<br /><br />
 	main text:<br />
-	<textarea rows="12" cols="90" name="article"><%= $msg %></textarea>
+	<textarea rows="12" cols="90" name="article" style="word-wrap: break-word;"><%= $msg %></textarea>
 	<br />
-<!--
+	
 	tags:<br />	
 	<input type="text" size="90" name="tags" value="<%= $tags %>" />
-//-->
+
 	<br />
 	<input type="submit" value="SAVE" />
 
