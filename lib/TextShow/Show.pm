@@ -1,14 +1,14 @@
 package TextShow::Show;
 use Mojo::Base 'Mojolicious::Controller';
 
+
 sub taglist {
 	my $self = shift;
 	
 	my $tag = $self->stash('tag');
 
 	my $list;
-	my $sth = $self->app->dbconn->run(fixup => sub {
-	
+	my $sth = $self->app->dbconn->run(fixup => sub {	
 		my $sth = $_->prepare('SELECT DISTINCT
 				a.article_id, a.mtime,
 				LEFT(a.text, 60) AS text
@@ -35,7 +35,7 @@ sub someone {
 
 	my $list; 	
 	my $sth = $self->app->dbconn->run(fixup => sub {
-		my $sth = $_->prepare("SELECT 				
+		my $sth = $_->prepare("SELECT 
 				a.article_id AS art_id, 
 				a.text AS text, a.mtime	
 			FROM article AS a
@@ -76,18 +76,24 @@ sub all {
 	my $self = shift;
 
 	my $list;
-	my $sth = $self->app->dbconn->run(fixup => sub {
-		my $sth = $_->prepare("SELECT 				
-				a.article_id AS aid, LEFT(a.text, 60) AS text, 
-				a.mtime, a.ctime
-			FROM article AS a
-			WHERE 
-				a.status != 0
-			ORDER BY a.mtime DESC");
-		$sth->execute();
-		$list = $sth->fetchall_hashref('ctime');
-		$sth->finish();
-	});
+	
+   	for my $row ($self->app->dbc->query("SELECT 
+   			a.article_id, 
+   			LEFT(a.text, 60) AS text_begin, 
+   			a.mtime, a.ctime
+   		FROM 
+   			article AS a
+   		WHERE
+   			a.status != 0 
+   		ORDER BY 
+   			a.mtime DESC"
+   	)->hashes) {
+   		my $tid = $row->{article_id};
+   		$list->{$tid}->{'mtime'} = $row->{mtime};   		
+   		$list->{$tid}->{'text'} = $row->{text_begin};
+   		$list->{$tid}->{'aid'} = $row->{article_id};
+    }
+
 	$self->stash(articles => $list);
 	
 }
