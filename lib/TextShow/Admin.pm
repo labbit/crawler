@@ -66,32 +66,19 @@ sub list {
 sub create {
 	my $self = shift;
 
-	eval {
-		my $sth = $self->app->dbconn->txn(fixup => sub {
-			my $sth = $_->prepare("INSERT INTO article
-				SET 
-					ctime = NOW(), 
-					text = 'new article'
-				");
-		});
-	};
-	if($@) {
-		$self->render(text => 'DB ERROR:'.$@); 
-		$self->flash( error => 'Something wrong to DB!' )->redirect_to('/admin');
-	} else {
-		$self->app->dbconn->dbh->commit;
-		my $l_id;
-		my $sth = $self->app->dbconn->run(fixup => sub {
-			my $sth = $_->prepare("SELECT LAST_INSERT_ID() AS l_id");
-			$sth->execute();
-			$l_id = $sth->fetchrow_arrayref;
-			$sth->finish();		
-		});
-say Dumper(${$l_id}[0]);
-		
-		# $self->redirect_to('/admin/'.${$l_id}[0].'/edit');
+	my $new_text = 'new article';
+	my $new_tag = 'new tag';
 
-	}
+
+	my $r = $self->app->dbc->query('INSERT INTO article SET ctime = NOW(), mtime = NOW(), text = ?', $new_text);
+	my ($text_id) = $self->app->dbc->query('SELECT article_id FROM article WHERE text = ? ORDER BY article_id DESC LIMIT 1', $new_text)->list;
+
+	my $tag_id = $self->tag_new_save($new_tag);
+	my @id = ($text_id, $tag_id);
+	my $r = $self->tag_save(@id);
+
+	my $edit_link = '/admin/' . $text_id . '/edit';	
+	$self->redirect_to($edit_link);
 
 }
 
@@ -289,10 +276,10 @@ sub update {
 
 					my $tag_id = $self->tag_check($t);
 					if (int($tag_id) == 0) {
-						$tag_id = $self->tag_new_save($t,$id);
+						$tag_id = $self->tag_new_save($t);
 					}
 					my @id = ($id, $tag_id);
-					my $r = $self->tag_save(@id);				
+					my $r = $self->tag_save(@id);
 
 				}			
 				
